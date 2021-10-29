@@ -1,5 +1,5 @@
 .background{
-    margin: 0 auto 12px auto;
-    width: 800px;
-    height: 600px;
+    margin: 0 15%;
+    padding: 2% 8% 4% 8%;
+    border: 1px solid LightGrey;
 }

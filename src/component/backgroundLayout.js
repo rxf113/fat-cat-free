@@ -9,11 +9,11 @@ export default () => {
       <InlineCards img={{
         left: "https://rxf113.xyz/static/ptow.jpg",
         right: "https://rxf113.xyz/static/ptow.jpg"
-      }}/>
+      }} href={"fileInput"}/>
       <InlineCards img={{
         left: "https://rxf113.xyz/static/ptow.jpg",
         right: "https://rxf113.xyz/static/ptow.jpg"
-      }}/>
+      }} href={"a"}/>
     </div>)
 }
 

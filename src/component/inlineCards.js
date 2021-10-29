@@ -6,12 +6,10 @@ export default function inlineCards(props) {
   return (
     <div className="tile">
       <div className="tile is-parent">
-        <Card
-          img={props.img.left}/>
+        <Card img={props.img.left} href={props.href}/>
       </div>
       <div className="tile is-parent">
-        <Card
-          img={props.img.right}/>
+        <Card img={props.img.right} href={props.href}/>
       </div>
     </div>
   )

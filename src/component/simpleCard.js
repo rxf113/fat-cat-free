@@ -1,16 +1,16 @@
 import React from "react"
 import * as cardStyle from "./simpleCard.module.css"
-import AniLink from 'gatsby-plugin-transition-link'
+import { Link } from "gatsby"
 
 export default function cardComponent(props) {
   return (
     <div className={cardStyle.ripple}>
-      <AniLink swipe="true" direction="right" top={"exit"} to={"" + props.href}>
+      <Link target="_blank" swipe="true" direction="right" top={"exit"} to={"" + props.path}  state={{title: props.title}}>
 
           {/*<img src={props.img} className={cardStyle.imgStyle}/>*/}
           <img src={props.img} className={cardStyle.box}/>
 
-      </AniLink>
+      </Link>
     </div>
 
 

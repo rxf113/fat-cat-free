@@ -4,16 +4,19 @@ import "bulma/css/bulma.min.css"
 import InlineCards from "./inlineCards"
 
 export default () => {
+
+  let defaultPath = "/fileInput"
+
   return (
     <div className={containerStyles.background}>
-      <InlineCards img={{
-        left: "https://rxf113.xyz/static/ptow.jpg",
-        right: "https://rxf113.xyz/static/ptow.jpg"
-      }} href={"fileInput"}/>
-      <InlineCards img={{
-        left: "https://rxf113.xyz/static/ptow.jpg",
-        right: "https://rxf113.xyz/static/ptow.jpg"
-      }} href={"a"}/>
+      <InlineCards
+        left={{ img: "https://rxf113.xyz/static/ptow.jpg", path: defaultPath, title: "我打你吗" }}
+        right={{ img: "https://rxf113.xyz/static/ptow.jpg", path: defaultPath, title: "SA" }}
+      />
+      <InlineCards
+        left={{ img: "https://rxf113.xyz/static/ptow.jpg", path: defaultPath, title: "来看看" }}
+        right={{ img: "https://rxf113.xyz/static/ptow.jpg", path: defaultPath, title: "反反复复" }}
+      />
     </div>)
 }
 

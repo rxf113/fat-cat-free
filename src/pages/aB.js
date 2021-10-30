@@ -1,6 +1,5 @@
 import * as React from "react"
 import TransitionLink from "gatsby-plugin-transition-link"
-import InputFile from "./fileInput"
 import Files from "react-files"
 
 

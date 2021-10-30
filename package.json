@@ -28,6 +28,7 @@
     "gatsby-plugin-transition-link": "^1.20.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
+    "react-dropzone": "^11.4.2",
     "react-files": "^2.4.9"
   },
   "devDependencies": {

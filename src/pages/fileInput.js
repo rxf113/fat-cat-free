@@ -3,6 +3,8 @@ import Dropzone from "react-dropzone"
 import * as fileInputCss from "./fileInput.module.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
+import { upload, convert, download } from "../component/fileLoad"
+import 'animate.css';
 
 const titleStyle = {
   width: "500px",
@@ -34,7 +36,7 @@ class FileInput extends Component {
   constructor(props) {
     super(props)
     this.onDrop = (files) => {
-      if(this.state.files.length === 1){
+      if (this.state.files.length === 1) {
         return
       }
       this.setState({
@@ -42,7 +44,8 @@ class FileInput extends Component {
         xBtnDisplay: "",
         confirmBtnDisplay: "",
         selectedFile: true,
-        fileStatus: FILE_STATUE.SELECTED
+        fileStatus: FILE_STATUE.SELECTED,
+        //fileNum: null
       })
     }
     this.state = {
@@ -51,39 +54,155 @@ class FileInput extends Component {
       files: [],
       selectedFile: false,
       fileStatus: FILE_STATUE.NULL,
-      confirmBtnClassName : "button is-link is-light"
+      confirmBtnClassName: "button is-link is-light",
+      msgDisplay: "none",
+      msgClassName: "message is-danger animate__animated animate__fadeIn",
+      msgInfo: null
     }
 
     this.clearSelectedFile = this.clearSelectedFile.bind(this)
     this.convertUnit = this.convertUnit.bind(this)
     this.getUnitNameByNum = this.getUnitNameByNum.bind(this)
     this.fileHandler = this.fileHandler.bind(this)
+    this.getFileName = this.getFileName.bind(this)
+    this.resetFile = this.resetFile.bind(this)
+    this.popAlert = this.popAlert.bind(this)
     console.log(props)
   }
 
+  //清除文件
+  resetFile(){
+    this.setState({
+      fileStatus: FILE_STATUE.NULL,
+      confirmBtnDisplay: "hidden",
+      files: [],
+      selectedFile: false,
+      confirmBtnClassName: "button is-link is-light"
+
+    })
+  }
+  //上传成功
+  uploadSuccess = response => {
+    console.log("上传成功")
+    console.log(response)
+    //更改状态
+    this.setState({
+      fileStatus: FILE_STATUE.UPLOADED,
+      confirmBtnClassName: "button is-link is-light"
+    })
+  }
+
+  uploadFailed = error => {
+    console.log(error)
+    console.log("上传失败")
+    this.popAlert("上传失败")
+    this.resetFile()
+  }
+
+  popAlert = (info) => {
+    this.setState({msgDisplay: "",msgInfo: info})
+    setTimeout(()=>{
+      this.setState({
+        msgClassName: "message is-danger animate__animated animate__fadeOutUp"
+      })
+      setTimeout(()=>{
+        this.setState({
+          msgClassName: "message is-danger animate__animated animate__fadeIn",
+        })
+        this.setState({
+          msgDisplay: "none"
+        })
+      },2000)
+    },3000)
+
+
+  }
+
+  convertSuccess = response => {
+    console.log("转换成功")
+    console.log(response)
+
+    //转换完成
+    this.setState({
+      fileStatus: FILE_STATUE.CONVERTED,
+      confirmBtnClassName: "button is-link is-light",
+      fileNum: "1234"
+    })
+  }
+
+  convertFailed = error => {
+    console.log(error)
+    console.log("转换失败")
+    this.popAlert("转换失败")
+    this.resetFile()
+  }
+
+  downloadSuccess = response => {
+    let url = window.URL.createObjectURL(new Blob([response.data]))
+    let link = document.createElement("a")
+    link.style.display = "none"
+    link.href = url
+    link.setAttribute("download", this.getFileName(response.headers["content-disposition"]))
+    document.body.appendChild(link)
+    console.log(response)
+    console.log(this.getFileName(response.headers["content-disposition"]))
+    console.log(response.headers)
+    link.click()
+  }
+
+  getFileName = val => {
+    let array = val.split(";")
+    const reg = new RegExp("^filename.*")
+    for (let item of array) {
+      item = item.trim()
+      if (reg.test(item)) {
+        return item.match("filename=(.*)")[1].replace(/"/g, "")
+      }
+    }
+    return new Date().getMilliseconds() + ".jpg"
+
+  }
+
+  downloadFailed = error => {
+    console.log(error)
+    console.log("下载失败")
+    this.popAlert("下载失败")
+    this.resetFile()
+  }
 
   fileHandler() {
     if (this.state.fileStatus === FILE_STATUE.SELECTED) {
       let file = this.state.files[0]
 
-      this.setState({ fileStatus: FILE_STATUE.UPLOADING, xBtnDisplay: "hidden",confirmBtnClassName: "button is-link is-light is-loading" })
-      setTimeout(() => {
-        //更改状态
-        //清除文件
-        this.setState({ fileStatus: FILE_STATUE.UPLOADED,confirmBtnClassName: "button is-link is-light" })
-      }, 3 * 1000)
+      this.setState({
+        fileStatus: FILE_STATUE.UPLOADING,
+        xBtnDisplay: "hidden",
+        confirmBtnClassName: "button is-link is-light is-loading"
+      })
+
+      //上传
+      upload(file, this.uploadSuccess.bind(this), this.uploadFailed.bind(this))
 
     } else if (this.state.fileStatus === FILE_STATUE.UPLOADED) {
       //开始转换
-      this.setState({ fileStatus: FILE_STATUE.CONVERTING,confirmBtnClassName: "button is-link is-light is-loading" })
-      //转换完成
-      setTimeout(() => {
-        //更改状态
-        this.setState({ fileStatus: FILE_STATUE.CONVERTED,confirmBtnClassName: "button is-link is-light" })
-      }, 3 * 1000)
+      this.setState({
+        fileStatus: FILE_STATUE.CONVERTING,
+        confirmBtnClassName: "button is-link is-light is-loading"
+      })
+
+      //转换
+      convert(this.convertSuccess.bind(this), this.convertFailed.bind(this))
+
     } else if (this.state.fileStatus === FILE_STATUE.CONVERTED) {
       //点击下载
-      this.setState({ fileStatus: FILE_STATUE.NULL, confirmBtnDisplay: "hidden", files: [], selectedFile: false })
+      this.setState({
+        fileStatus: FILE_STATUE.NULL,
+        confirmBtnDisplay: "hidden",
+        files: [],
+        selectedFile: false
+      })
+
+      download(this.downloadSuccess.bind(this), this.downloadFailed.bind(this))
     }
 
   }
@@ -174,10 +293,17 @@ class FileInput extends Component {
     }
 
     const confirmBtnStyle = {
-      marginLeft: "2.8%",
+      marginLeft: "1%",
       visibility: this.state.confirmBtnDisplay
     }
 
+    const msgStyle = {
+      width:"15%",
+      position: "absolute",
+      top: "5%",
+      left: "45%",
+      display: this.state.msgDisplay
+    }
 
     const selectedFile = <span>已选择文件 : </span>
     const notSelectedFile = <span>请选择文件 : </span>
@@ -199,10 +325,20 @@ class FileInput extends Component {
 
     return (
       <div>
+          <article style={msgStyle} className={this.state.msgClassName}>
+            <div className="message-header">
+              <p>{this.state.msgInfo}</p>
+            </div>
+            <div className="message-body">
+              具体问题请联系管理员!
+            </div>
+          </article>
+
+
         <div style={titleStyle}>
-          <span
-            style={titleSpanStyle}>{title}</span>
+          <span style={titleSpanStyle}>{title}</span>
         </div>
+
         <Dropzone onDrop={this.onDrop}>
           {({ getRootProps, getInputProps }) => (
             <div>

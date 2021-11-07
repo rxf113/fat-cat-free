@@ -1,6 +1,6 @@
 import React from "react"
 
-export default () => (
+const notFound = () => (
   <div>
     Page Not Fount，页面不存在!
     <div>
@@ -14,3 +14,4 @@ export default () => (
     </div>
   </div>
 )
+export default notFound;

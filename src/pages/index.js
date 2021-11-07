@@ -22,7 +22,7 @@ const text = {
 export default function Home() {
   return <div>
       <div style={navigate}>
-        <a style={text} href="#">写点常用的工具,有需要?</a>
+        <a style={text} href="#">😨😨😨😨😨😨😨</a>
       </div>
 
     <Background/>

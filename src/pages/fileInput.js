@@ -39,6 +39,16 @@ class FileInput extends Component {
       if (this.state.files.length === 1) {
         return
       }
+      let notMatch = true
+      for (let type of this.state.fileTypes) {
+        if(files[0].path.endsWith(type)){
+          notMatch = false
+        }
+      }
+      if(notMatch){
+        return
+      }
+
       this.setState({
         files: files,
         xBtnDisplay: "",
@@ -48,6 +58,11 @@ class FileInput extends Component {
     
       })
     }
+    let types = [];
+    if (props.location && props.location.state && props.location.state.fileTypes) {
+      types = props.location.state.fileTypes
+    }
+
     this.state = {
       xBtnDisplay: "hidden",
       confirmBtnDisplay: "hidden",
@@ -58,7 +73,7 @@ class FileInput extends Component {
       msgDisplay: "none",
       msgClassName: "message is-danger animate__animated animate__fadeIn",
       msgInfo: null,
-      
+      fileTypes: types
     }
 
     this.clearSelectedFile = this.clearSelectedFile.bind(this)
@@ -68,7 +83,6 @@ class FileInput extends Component {
     this.getFileName = this.getFileName.bind(this)
     this.resetFile = this.resetFile.bind(this)
     this.popAlert = this.popAlert.bind(this)
-    console.log(props)
   }
 
   //清除文件
@@ -328,7 +342,7 @@ class FileInput extends Component {
       )
     })
 
-    let title = "别乱搞啊卧槽!"
+    let title = "别啊卧槽!"
     if (this.props.location && this.props.location.state) {
       title = this.props.location.state.title
     }

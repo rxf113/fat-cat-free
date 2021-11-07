@@ -5,7 +5,7 @@ const download = function download(fileId, success, fail) {
   let options = {
     method: "GET",
     responseType: "blob",
-    url: `http://127.0.0.1:9998/api/download?fileId=${fileId}`
+    url: `https://rxf113.xyz/fat-cat/api/download?fileId=${fileId}`
   }
   axios(options)
     .then(res => {
@@ -16,7 +16,7 @@ const download = function download(fileId, success, fail) {
 }
 
 const convert = function convert(fileId, success, fail) {
-  let promise = axios(`http://127.0.0.1:9998/api/convert?fileId=${fileId}`)
+  let promise = axios(`https://rxf113.xyz/fat-cat/api/convert?fileId=${fileId}`)
   promise.then(function(response) {
     success(response)
   }).catch(function(error) {
@@ -37,7 +37,7 @@ const upload = function upload(file, success, fail) {
     data: fd,
     //url: "https://rxf113.xyz/utils/api/upLoadPicture",
     timeout: 10000,
-    url: "http://127.0.0.1:9998/api/upload"
+    url: "https://rxf113.xyz/fat-cat/api/upload"
   }
 
   let promise = axios(options)

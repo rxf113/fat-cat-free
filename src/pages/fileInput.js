@@ -45,7 +45,7 @@ class FileInput extends Component {
         confirmBtnDisplay: "",
         selectedFile: true,
         fileStatus: FILE_STATUE.SELECTED,
-        //fileNum: null
+    
       })
     }
     this.state = {
@@ -57,7 +57,8 @@ class FileInput extends Component {
       confirmBtnClassName: "button is-link is-light",
       msgDisplay: "none",
       msgClassName: "message is-danger animate__animated animate__fadeIn",
-      msgInfo: null
+      msgInfo: null,
+      
     }
 
     this.clearSelectedFile = this.clearSelectedFile.bind(this)
@@ -83,13 +84,20 @@ class FileInput extends Component {
   }
   //上传成功
   uploadSuccess = response => {
-    console.log("上传成功")
-    console.log(response)
-    //更改状态
-    this.setState({
-      fileStatus: FILE_STATUE.UPLOADED,
-      confirmBtnClassName: "button is-link is-light"
-    })
+    if(response.data.code === 200){
+      console.log("上传成功")
+      console.log(response)
+      //更改状态
+      this.setState({
+        fileStatus: FILE_STATUE.UPLOADED,
+        confirmBtnClassName: "button is-link is-light",
+        fileId: response.data.data
+      })
+    }else{
+      this.popAlert(response.data.msg)
+      this.resetFile()
+    }
+    
   }
 
   uploadFailed = error => {
@@ -119,15 +127,18 @@ class FileInput extends Component {
   }
 
   convertSuccess = response => {
-    console.log("转换成功")
-    console.log(response)
+    if(response.data.code === 200){
+      //转换完成
+      this.setState({
+        fileStatus: FILE_STATUE.CONVERTED,
+        confirmBtnClassName: "button is-link is-light",
+        fileNum: "1234"
+      })
+    }else{
+      this.popAlert(response.data.msg)
+      this.resetFile()
+    }
 
-    //转换完成
-    this.setState({
-      fileStatus: FILE_STATUE.CONVERTED,
-      confirmBtnClassName: "button is-link is-light",
-      fileNum: "1234"
-    })
   }
 
   convertFailed = error => {
@@ -191,7 +202,7 @@ class FileInput extends Component {
       })
 
       //转换
-      convert(this.convertSuccess.bind(this), this.convertFailed.bind(this))
+      convert(this.state.fileId, this.convertSuccess.bind(this), this.convertFailed.bind(this))
 
     } else if (this.state.fileStatus === FILE_STATUE.CONVERTED) {
       //点击下载
@@ -202,7 +213,7 @@ class FileInput extends Component {
         selectedFile: false
       })
 
-      download(this.downloadSuccess.bind(this), this.downloadFailed.bind(this))
+      download(this.state.fileId,this.downloadSuccess.bind(this), this.downloadFailed.bind(this))
     }
 
   }
@@ -228,7 +239,6 @@ class FileInput extends Component {
 
 
   clearSelectedFile(acceptedFiles) {
-    console.log("======  acceptedFiles  ======= ")
     console.log(acceptedFiles)
     this.setState(({
       xBtnDisplay: "hidden",

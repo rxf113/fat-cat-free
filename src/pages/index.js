@@ -10,6 +10,7 @@ const navigate = {
   borderTop: "1px solid #ddd",
   borderBottom: "1px solid #ddd",
   lineHeight: "50px",
+  margin: "0 15%"
 }
 const text = {
   fontSize: "24px",
@@ -21,7 +22,7 @@ const text = {
 export default function Home() {
   return <div>
       <div style={navigate}>
-        <a style={text} href="#">当然我在扯淡</a>
+        <a style={text} href="#">写点常用的工具,有需要?</a>
       </div>
 
     <Background/>

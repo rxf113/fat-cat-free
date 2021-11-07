@@ -5,7 +5,7 @@ import InlineCards from "./inlineCards"
 
 export default () => {
 
-  let defaultPath = "/fileInput"
+  let defaultPath = "/utils/fileInput"
 
   return (
     <div className={containerStyles.background}>

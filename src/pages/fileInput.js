@@ -58,9 +58,31 @@ class FileInput extends Component {
     
       })
     }
+
+    let storage = window.sessionStorage;
+
+    let title = "卧槽!有问题"
+
+    console.log(`storage.title: ${storage.title}`)
+    if(storage.title){
+      title = storage.getItem("title");
+    }else{
+      if (this.props.location && this.props.location.state) {
+        title = this.props.location.state.title
+        storage.setItem("title",title)
+      }
+    }
+
     let types = [];
-    if (props.location && props.location.state && props.location.state.fileTypes) {
-      types = props.location.state.fileTypes
+    console.log(`storage.types : ${storage.types}`)
+    if(storage.types){
+      types = JSON.parse(sessionStorage.getItem('types'));
+    }else{
+      if (props.location && props.location.state && props.location.state.fileTypes) {
+        types = props.location.state.fileTypes
+
+        storage.setItem('types', JSON.stringify(types));
+      }
     }
 
     this.state = {
@@ -73,7 +95,8 @@ class FileInput extends Component {
       msgDisplay: "none",
       msgClassName: "message is-danger animate__animated animate__fadeIn",
       msgInfo: null,
-      fileTypes: types
+      fileTypes: types,
+      title: title
     }
 
     this.clearSelectedFile = this.clearSelectedFile.bind(this)
@@ -342,11 +365,6 @@ class FileInput extends Component {
       )
     })
 
-    let title = "别啊卧槽!"
-    if (this.props.location && this.props.location.state) {
-      title = this.props.location.state.title
-    }
-
     return (
       <div>
           <article style={msgStyle} className={this.state.msgClassName}>
@@ -360,7 +378,7 @@ class FileInput extends Component {
 
 
         <div style={titleStyle}>
-          <span style={titleSpanStyle}>{title}</span>
+          <span style={titleSpanStyle}>{this.state.title}</span>
         </div>
 
         <Dropzone onDrop={this.onDrop}>

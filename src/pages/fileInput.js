@@ -4,7 +4,7 @@ import * as fileInputCss from "./fileInput.module.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
 import { upload, convert, download } from "../component/fileLoad"
-import 'animate.css';
+import "animate.css"
 
 const titleStyle = {
   width: "500px",
@@ -41,11 +41,11 @@ class FileInput extends Component {
       }
       let notMatch = true
       for (let type of this.state.fileTypes) {
-        if(files[0].path.endsWith(type)){
+        if (files[0].path.endsWith(type)) {
           notMatch = false
         }
       }
-      if(notMatch){
+      if (notMatch) {
         return
       }
 
@@ -54,36 +54,25 @@ class FileInput extends Component {
         xBtnDisplay: "",
         confirmBtnDisplay: "",
         selectedFile: true,
-        fileStatus: FILE_STATUE.SELECTED,
-    
+        fileStatus: FILE_STATUE.SELECTED
+
       })
     }
 
-    let storage = window.sessionStorage;
 
-    let title = "卧槽!有问题"
+    let title = null
 
-    console.log(`storage.title: ${storage.title}`)
-    if(storage.title){
-      title = storage.getItem("title");
-    }else{
-      if (this.props.location && this.props.location.state) {
-        title = this.props.location.state.title
-        storage.setItem("title",title)
-      }
+    if (this.props.location && this.props.location.state) {
+      title = this.props.location.state.title
     }
 
-    let types = [];
-    console.log(`storage.types : ${storage.types}`)
-    if(storage.types){
-      types = JSON.parse(sessionStorage.getItem('types'));
-    }else{
-      if (props.location && props.location.state && props.location.state.fileTypes) {
-        types = props.location.state.fileTypes
+    let types = null
 
-        storage.setItem('types', JSON.stringify(types));
-      }
+    if (props.location && props.location.state && props.location.state.fileTypes) {
+      types = props.location.state.fileTypes
+
     }
+
 
     this.state = {
       xBtnDisplay: "hidden",
@@ -108,8 +97,9 @@ class FileInput extends Component {
     this.popAlert = this.popAlert.bind(this)
   }
 
+
   //清除文件
-  resetFile(){
+  resetFile() {
     this.setState({
       fileStatus: FILE_STATUE.NULL,
       confirmBtnDisplay: "hidden",
@@ -119,9 +109,10 @@ class FileInput extends Component {
 
     })
   }
+
   //上传成功
   uploadSuccess = response => {
-    if(response.data.code === 200){
+    if (response.data.code === 200) {
       console.log("上传成功")
       console.log(response)
       //更改状态
@@ -130,11 +121,11 @@ class FileInput extends Component {
         confirmBtnClassName: "button is-link is-light",
         fileId: response.data.data
       })
-    }else{
+    } else {
       this.popAlert(response.data.msg)
       this.resetFile()
     }
-    
+
   }
 
   uploadFailed = error => {
@@ -145,33 +136,33 @@ class FileInput extends Component {
   }
 
   popAlert = (info) => {
-    this.setState({msgDisplay: "",msgInfo: info})
-    setTimeout(()=>{
+    this.setState({ msgDisplay: "", msgInfo: info })
+    setTimeout(() => {
       this.setState({
         msgClassName: "message is-danger animate__animated animate__fadeOutUp"
       })
-      setTimeout(()=>{
+      setTimeout(() => {
         this.setState({
-          msgClassName: "message is-danger animate__animated animate__fadeIn",
+          msgClassName: "message is-danger animate__animated animate__fadeIn"
         })
         this.setState({
           msgDisplay: "none"
         })
-      },2000)
-    },3000)
+      }, 2000)
+    }, 3000)
 
 
   }
 
   convertSuccess = response => {
-    if(response.data.code === 200){
+    if (response.data.code === 200) {
       //转换完成
       this.setState({
         fileStatus: FILE_STATUE.CONVERTED,
         confirmBtnClassName: "button is-link is-light",
         fileNum: "1234"
       })
-    }else{
+    } else {
       this.popAlert(response.data.msg)
       this.resetFile()
     }
@@ -250,7 +241,7 @@ class FileInput extends Component {
         selectedFile: false
       })
 
-      download(this.state.fileId,this.downloadSuccess.bind(this), this.downloadFailed.bind(this))
+      download(this.state.fileId, this.downloadSuccess.bind(this), this.downloadFailed.bind(this))
     }
 
   }
@@ -308,6 +299,33 @@ class FileInput extends Component {
     }
   }
 
+  componentDidMount() {
+    let types = this.state.types
+    if (!types) {
+      let item = window.sessionStorage.getItem("types")
+      if (item) {
+        types = JSON.parse(item)
+        this.setState({ fileTypes: types })
+      }
+    } else {
+      window.sessionStorage.setItem("types", JSON.stringify(types))
+    }
+
+
+    let title = this.state.title
+    if (!title) {
+      title = window.sessionStorage.getItem("title")
+      if (title) {
+        this.setState({ title: title })
+      }
+      window.sessionStorage.setItem("title", title)
+    } else {
+      window.sessionStorage.setItem("title", title)
+
+    }
+  }
+
+
   render() {
 
     const wrongBtnStyle = {
@@ -345,7 +363,7 @@ class FileInput extends Component {
     }
 
     const msgStyle = {
-      width:"15%",
+      width: "15%",
       position: "absolute",
       top: "5%",
       left: "45%",
@@ -367,14 +385,14 @@ class FileInput extends Component {
 
     return (
       <div>
-          <article style={msgStyle} className={this.state.msgClassName}>
-            <div className="message-header">
-              <p>{this.state.msgInfo}</p>
-            </div>
-            <div className="message-body">
-              具体问题请联系管理员!
-            </div>
-          </article>
+        <article style={msgStyle} className={this.state.msgClassName}>
+          <div className="message-header">
+            <p>{this.state.msgInfo}</p>
+          </div>
+          <div className="message-body">
+            具体问题请联系管理员!
+          </div>
+        </article>
 
 
         <div style={titleStyle}>

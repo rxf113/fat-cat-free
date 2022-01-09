@@ -3,7 +3,7 @@ import Dropzone from "react-dropzone"
 import * as fileInputCss from "./fileInput.module.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faTimes } from "@fortawesome/free-solid-svg-icons"
-import { upload, convert, download } from "../component/fileLoad"
+import type2Methods  from "../component/fileLoad"
 import "animate.css"
 
 const titleStyle = {
@@ -39,15 +39,22 @@ class FileInput extends Component {
       if (this.state.files.length === 1) {
         return
       }
+
+
       let notMatch = true
-      for (let type of this.state.fileTypes) {
-        if (files[0].path.endsWith(type)) {
-          notMatch = false
+
+      if (this.state.fileTypes) {
+        for (let type of this.state.fileTypes) {
+          if (files[0].path.endsWith(type)) {
+            notMatch = false
+          }
+        }
+        if (notMatch) {
+          return
         }
       }
-      if (notMatch) {
-        return
-      }
+
+
 
       this.setState({
         files: files,
@@ -67,7 +74,6 @@ class FileInput extends Component {
     }
 
     let types = null
-
     if (props.location && props.location.state && props.location.state.fileTypes) {
       types = props.location.state.fileTypes
 
@@ -85,8 +91,11 @@ class FileInput extends Component {
       msgClassName: "message is-danger animate__animated animate__fadeIn",
       msgInfo: null,
       fileTypes: types,
-      title: title
+      title: title,
+      featType: this.props.location.state.featType,
     }
+
+    
 
     this.clearSelectedFile = this.clearSelectedFile.bind(this)
     this.convertUnit = this.convertUnit.bind(this)
@@ -95,6 +104,7 @@ class FileInput extends Component {
     this.getFileName = this.getFileName.bind(this)
     this.resetFile = this.resetFile.bind(this)
     this.popAlert = this.popAlert.bind(this)
+    this.getMethodByFeatType = this.getMethodByFeatType.bind(this)
   }
 
 
@@ -209,7 +219,16 @@ class FileInput extends Component {
     this.resetFile()
   }
 
+
+  getMethodByFeatType(featType) {
+    console.log(type2Methods)
+    return type2Methods[featType]
+  }
+
+
   fileHandler() {
+    let name2Method = this.getMethodByFeatType(this.state.featType);
+
     if (this.state.fileStatus === FILE_STATUE.SELECTED) {
       let file = this.state.files[0]
 
@@ -220,7 +239,7 @@ class FileInput extends Component {
       })
 
       //上传
-      upload(file, this.uploadSuccess.bind(this), this.uploadFailed.bind(this))
+      name2Method.upload(file, this.uploadSuccess.bind(this), this.uploadFailed.bind(this))()
 
     } else if (this.state.fileStatus === FILE_STATUE.UPLOADED) {
       //开始转换
@@ -230,7 +249,7 @@ class FileInput extends Component {
       })
 
       //转换
-      convert(this.state.fileId, this.convertSuccess.bind(this), this.convertFailed.bind(this))
+      name2Method.convert(this.state.fileId, this.convertSuccess.bind(this), this.convertFailed.bind(this))()
 
     } else if (this.state.fileStatus === FILE_STATUE.CONVERTED) {
       //点击下载
@@ -241,7 +260,7 @@ class FileInput extends Component {
         selectedFile: false
       })
 
-      download(this.state.fileId, this.downloadSuccess.bind(this), this.downloadFailed.bind(this))
+      name2Method.download(this.state.fileId, this.downloadSuccess.bind(this), this.downloadFailed.bind(this))()
     }
 
   }
@@ -378,8 +397,8 @@ class FileInput extends Component {
       let sizeUnit = this.convertUnit(file.size)
       return (
         <span key={file.path}>
-      {file.path} ({sizeUnit})
-    </span>
+          {file.path} ({sizeUnit})
+        </span>
       )
     })
 
@@ -414,7 +433,7 @@ class FileInput extends Component {
                 <div style={wrongBtnStyle}>
                   <FontAwesomeIcon
                     icon={faTimes} className={fileInputCss.wrong}
-                    onClick={this.clearSelectedFile.bind(this, this.state.files)}/>
+                    onClick={this.clearSelectedFile.bind(this, this.state.files)} />
                 </div>
                 <button className={this.state.confirmBtnClassName} onClick={this.fileHandler} style={confirmBtnStyle}>
                   {this.getConfirmBtnStyle()}

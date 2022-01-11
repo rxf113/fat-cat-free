@@ -66,20 +66,23 @@ const pdf2WordConvert = function (fileId, success, fail) {
   return getConvertFunc(fileId, success, fail, "http://192.168.1.5:9999/api/convert");
 }
 
-
 const pdf2Word = {
   upload: pdf2WordUpload,
   convert: pdf2WordConvert,
   download: pdf2WordDownload
 }
 
-const type2Methods = {
-  1: pdf2Word
-}
-
 //pdf转word功能 ==========================
 
 
+//png转svg功能 ===========================
 
+
+
+//png转svg功能 ===========================
+
+const type2Methods = {
+  1: pdf2Word
+}
 
 export default type2Methods 
